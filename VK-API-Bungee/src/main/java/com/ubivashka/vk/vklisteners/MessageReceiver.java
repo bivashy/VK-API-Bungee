@@ -38,7 +38,6 @@ public class MessageReceiver {
 				if (messages != null && !messages.isEmpty()) {
 					for (int i = 0; i < messages.size(); i++) {
 						callEvent(messages.get(i));
-						System.out.println(messages.get(i));
 					}
 					messages = null;
 				}

@@ -41,7 +41,6 @@ public class LongpollAPI {
 					GetLongPollEventsResponse events = (GetLongPollEventsResponse) plugin.vk.longPoll()
 							.getEvents(longserver.getServer(), longserver.getKey(), ts).execute();
 					for (JsonObject json : events.getUpdates()) {
-						System.out.println(json.toString());
 						LongpollAPI.this.callEvent(json);
 					}
 					ts = events.getTs();
