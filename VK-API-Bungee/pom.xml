@@ -75,15 +75,14 @@
 
 	</dependencies>
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<defaultGoal>clean package install</defaultGoal>
 		<plugins>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<forkMode>always</forkMode>
-					<argLine>-Dlog4j.configuration=file:./log4j.xml</argLine>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -119,4 +118,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
