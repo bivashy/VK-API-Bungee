@@ -7,6 +7,8 @@ import com.ubivashka.vk.VKAPI;
 import com.ubivashka.vk.events.VKJsonEvent;
 import com.ubivashka.vk.runnables.ProxyRunnable;
 import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.exceptions.LongPollServerKeyExpiredException;
 import com.vk.api.sdk.objects.callback.longpoll.responses.GetLongPollEventsResponse;
 import com.vk.api.sdk.objects.groups.responses.GetLongPollServerResponse;
 
@@ -22,13 +24,7 @@ public class LongpollAPI {
 
 	public LongpollAPI(VKAPI plugin) {
 		this.plugin = plugin;
-		try {
-			this.longserver = (GetLongPollServerResponse) plugin.vk.groupsLongPoll()
-					.getLongPollServer(plugin.actor, plugin.actor.getGroupId().intValue()).execute();
-		} catch (ApiException | com.vk.api.sdk.exceptions.ClientException e) {
-			e.printStackTrace();
-			return;
-		}
+		updateKey();
 		ts = longserver.getTs();
 		startEventListener();
 	}
@@ -44,6 +40,8 @@ public class LongpollAPI {
 						LongpollAPI.this.callEvent(json);
 					}
 					ts = events.getTs();
+				} catch (LongPollServerKeyExpiredException e) {
+					updateKey();
 				} catch (NumberFormatException | ApiException | com.vk.api.sdk.exceptions.ClientException e) {
 					e.printStackTrace();
 					cancel();
@@ -56,5 +54,15 @@ public class LongpollAPI {
 		VKJsonEvent jsonEvent = new VKJsonEvent(json);
 		plugin.getProxy().getPluginManager().callEvent((Event) jsonEvent);
 		plugin.callbackAPI.parse(json);
+	}
+
+	private void updateKey() {
+		try {
+			this.longserver = (GetLongPollServerResponse) plugin.vk.groupsLongPoll()
+					.getLongPollServer(plugin.actor, plugin.actor.getGroupId().intValue()).execute();
+		} catch (ApiException | com.vk.api.sdk.exceptions.ClientException e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 }
